@@ -55,9 +55,16 @@ class testNewThing {
 	
 	@Test
 	void testXML() {
-		FileFixedLengthInfo ff = new FileFixedLengthInfo();
-		ff.getFileFormat("MSLI0100_TDMMYY_BCAP.TXT");
-		assertNotNull(ff);
+		FileFixedLengthProcessor ff = new FileFixedLengthProcessor();
+		FileFixedLengthInfo[] list = ff.getFileFormat("MSLI0100_TDMMYY_BCAP.TXT");
+		System.out.println(list.length);
+		assertNotNull(list);
+	}
+	@Test
+	void testUnmashall() {
+		XmlToJavaObjects xml2java = new XmlToJavaObjects();
+		xml2java.test();
+		assertNotNull(xml2java);
 	}
 }
 class TestClass{
