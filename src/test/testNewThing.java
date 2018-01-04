@@ -2,12 +2,26 @@ package test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.io.IOException;
 import java.lang.reflect.Field;
+import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
 import export.*;
-import filetemplate.*;
+import export.filetemplate.FileFixed;
+import export.filetemplate.FileFixedDetail;
+import export.filetemplate.FileFixedFieldInfo;
+import export.filetemplate.FileFixedFooter;
+import export.filetemplate.FileFixedHeader;
+import export.filetemplate.FileFixedProcessor;
+import export.filetemplate.XmlToJavaObjects;
+import export.outputformat.iclicense.IcLicense;
+import export.outputformat.iclicense.IcLicenseFooter;
+import export.outputformat.iclicense.IcLicenseHeader;
+import export.outputformat.iclicense.TestListIcData;
+import importfile.ReadHRCsv;
+import importfile.inputformat.IcFromHr;
 
 class testNewThing {
 	@Test
@@ -32,40 +46,53 @@ class testNewThing {
 	
 	@Test
 	void testIcLicense() {
-		String format = "%1s%6s%10s%15s%8s%6s%10s%10s%6s%8s%6s%10s%10s%6s%2s%25s%8s%10s%30s%50s%25s%1s%6s%1s%1s%129s";
 
+		FixedFileExport ic = new FixedFileExport();
 		IcLicense icl = new IcLicense();
 		icl.idNo = "1234567890";
-		IcLicenseExport ic = new IcLicenseExport();
+		
+		FileFixedFieldInfo[] formatL = testXML("detail");
 
-			String yeah="";
-			try {
-				yeah = ic.getDataObjectDetail(icl, format);
-			} catch (IllegalArgumentException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IllegalAccessException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+		if(formatL!=null) {
+			for(FileFixedFieldInfo s: formatL) {
+				System.out.println(s.getField_name()+"\t"+s.getField_default()+"\t"+s.getField_length());
 			}
-			System.out.println(yeah.length());
+		}
+
+		String yeah="";
+
+			yeah = ic.getDataObjectDetail(icl, formatL);
+		
+		
+		System.out.println(yeah);
 		
 		assertNotNull(icl);
 	}
 	
-	@Test
-	void testXML() {
-		FileFixedLengthProcessor ff = new FileFixedLengthProcessor();
-		FileFixedLengthInfo[] list = ff.getFileFormat("MSLI0100_TDMMYY_BCAP.TXT");
-		System.out.println(list.length);
-		assertNotNull(list);
-	}
+	
+	
+	
 	@Test
 	void testUnmashall() {
 		XmlToJavaObjects xml2java = new XmlToJavaObjects();
 		xml2java.test();
 		assertNotNull(xml2java);
 	}
+	
+	@Test
+	void testGetLength() {
+		FileFixedProcessor fprocessor = new FileFixedProcessor();
+		TestListIcData test = new TestListIcData();
+		FileFixed fileFormat = test.testXML();
+		List<String> list = test.getFormatOutputIcData();
+		
+		FixedFileExport exp = new FixedFileExport();
+		exp.writeFileFormatFile(fileFormat, list);
+
+		assertNotNull(list);
+	}
+	
+
 }
 class TestClass{
 	
